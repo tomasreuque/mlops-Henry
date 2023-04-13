@@ -64,6 +64,7 @@ def get_actor(platform: str, year: int):
                             (peliculas['plataforma'] == platform) &
                             (peliculas['release_year'] == year)]
 
+
     # Separa el cast de las películas en una lista de actores
     cast_lists = filtered_df['cast'].str.split(',').tolist()
     cast = [actor.strip() for sublist in cast_lists for actor in sublist]
@@ -73,6 +74,9 @@ def get_actor(platform: str, year: int):
     top_actor = actor_counts.most_common(1)[0][0]
     
     return top_actor
+
+
+
 
 import uvicorn
 
