@@ -51,31 +51,6 @@ def get_count_platform(platform: str):
     
     return count
 
-# endpoint actor mas repetido por plataforma y año dado
-@app.get("/get_actor/{platform}/{year}")
-def get_actor(platform: str, year: int):
-    # Valida que la plataforma sea una de las cuatro permitidas
-    valid_platforms = ['amazon', 'netflix', 'hulu', 'disney']
-    if platform not in valid_platforms:
-        return {"error": "La plataforma no es válida"}
-
-    # Filtra el dataframe para obtener solo las películas de la plataforma y año especificados
-    filtered_df = peliculas[(peliculas["type"] == "movie") & 
-                            (peliculas['plataforma'] == platform) &
-                            (peliculas['release_year'] == year)]
-
-
-    # Separa el cast de las películas en una lista de actores
-    cast_lists = filtered_df['cast'].str.split(',').tolist()
-    cast = [actor.strip() for sublist in cast_lists for actor in sublist]
-
-    # Cuenta la cantidad de veces que aparece cada actor y devuelve el que más se repite
-    actor_counts = Counter(cast)
-    top_actor = actor_counts.most_common(1)[0][0]
-    
-    return top_actor
-
-
 
 
 import uvicorn
