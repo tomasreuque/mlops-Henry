@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from collections import Counter
 
 # importar la base de datos
-peliculas = pd.read_csv(r"C:\Users\tomas\Desktop\mlops-Henry\streamingfinal.csv")
+peliculas = pd.read_csv(r"C:/Users/tomas/Desktop/mlops-Henry/streamingfinal.csv")
 
 # inicializar FastAPI
 app = FastAPI()
@@ -56,4 +56,4 @@ def get_count_platform(platform: str):
 import uvicorn
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=10000)
