@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Directorio de los archivos csv
-directory = (r"C:\Users\tomas\Desktop\mlops-Henry\csv")
+directory = (r"C:/Users/tomas/Desktop/mlops-Henry/csv")
 raw = []
 
 # Bucle a través del directorio para leer los archivos csv
@@ -46,7 +46,7 @@ peliculas["duration_type"] = peliculas["duration_type"].str.replace("seasons", "
 peliculas = peliculas.applymap(lambda x: x.lower() if isinstance(x, str) else x)
 
 # Obtengo el promedio de ratings de todos los movieIds
-dir_path = r"C:\Users\tomas\Desktop\mlops-Henry\ratings" # Se establece el directorio donde se encuentran los archivos CSV con los ratings
+dir_path = (r"C:/Users/tomas/Desktop/mlops-Henry/ratings") # Se establece el directorio donde se encuentran los archivos CSV con los ratings
 csv_files = [os.path.join(dir_path, f) for f in os.listdir(dir_path) if f.endswith('.csv')] # Se crea una lista con los nombres de todos los archivos CSV en el directorio
 
 df_concat = pd.DataFrame() # Se crea un dataframe vacío para alojar los nuevos
