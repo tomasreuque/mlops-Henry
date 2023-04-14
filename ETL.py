@@ -3,48 +3,47 @@ import os
 
 # Directorio de los archivos csv
 directory = (r"C:\Users\tomas\Desktop\mlops-Henry\csv")
-dataframes = []
+raw = []
 
 # Bucle a través del directorio para leer los archivos csv
 for filename in os.listdir(directory):
     if filename.endswith(".csv"): # Lee solo los csv
         # Agrego la columna plataforma aprovechando el loop
         df = pd.read_csv(os.path.join(directory, filename))
-        df["plataforma"] = filename.split("_")[0]  # Extraigo el nombre de la plataforma 
-        
-        # Mergeo la primera letra de archivo con la columna show_id para 
-        df["id"] = filename.split("_")[0][0] + df["show_id"].astype(str)
-        
+        df["plataforma"] = filename.split("_")[0]  # Extraigo el nombre de la plataforma
         # Append the dataframe to the list
-        dataframes.append(df)
+        raw.append(df)
 
 # Concatenación de dataframes
-merged_df = pd.concat(dataframes)
-
+peliculas = pd.concat(raw)
+##hago un drop
+peliculas.drop(['id', 'duration_int', 'duration_type'], axis=1, inplace=True)
+#creo variable id en base a la columna plataforma
+peliculas["id"] = peliculas["plataforma"].apply(lambda x: x.split("_")[0][0]) + peliculas["show_id"]
 # Extraigo los valores duration en columna rating
 duration_regex = r'(\d+\s(min|seasons)|\d+\s\w+\s\d+\s\w+)?'  # Expresión regular para hallar valores de duración
-merged_df['duration_extracted'] = merged_df['rating'].str.extract(duration_regex)[0]
+peliculas['duration_extracted'] = peliculas['rating'].str.extract(duration_regex)[0]
 
 # Ingerto los NaN con los valores extraídos
-merged_df['duration'].fillna(value=merged_df['duration_extracted'], inplace=True)
+peliculas['duration'].fillna(value=peliculas['duration_extracted'], inplace=True)
 
 # Dropeo la columna duration_extracted
-merged_df.drop('duration_extracted', axis=1, inplace=True)
+peliculas.drop('duration_extracted', axis=1, inplace=True)
 
 # Rellenamos los NaN values con la letra G
-merged_df["rating"].fillna('G', inplace=True)
+peliculas["rating"].fillna('G', inplace=True)
 
 # Transformando fechas
-merged_df['date_added'] = pd.to_datetime(merged_df['date_added'], infer_datetime_format=True, errors='coerce')
+peliculas['date_added'] = pd.to_datetime(peliculas['date_added'], infer_datetime_format=True, errors='coerce')
 
 # Divido la columna "duration" en duration_int y duration_type. 
-merged_df[['duration_int', 'duration_type']] = merged_df['duration'].str.extract('(\d+)\s*(\w+)')
+peliculas[['duration_int', 'duration_type']] = peliculas['duration'].str.extract('(\d+)\s*(\w+)')
 
 # Reemplazo "seasons" por "season":
-merged_df["duration_type"] = merged_df["duration_type"].str.replace("seasons", "season")
+peliculas["duration_type"] = peliculas["duration_type"].str.replace("seasons", "season")
 
 # Transformo en minúsculas las entradas string 
-merged_df = merged_df.applymap(lambda x: x.lower() if isinstance(x, str) else x)
+peliculas = peliculas.applymap(lambda x: x.lower() if isinstance(x, str) else x)
 
 # Obtengo el promedio de ratings de todos los movieIds
 dir_path = r"C:\Users\tomas\Desktop\mlops-Henry\ratings" # Se establece el directorio donde se encuentran los archivos CSV con los ratings
@@ -61,6 +60,11 @@ for file in csv_files:
 df_mean = df_concat.groupby('movieId', as_index=False).mean().rename(columns={'rating': 'mean_rating'})
 
 # Hago un merge de a columna
-merged_df = merged_df.merge(df_mean[['movieId', 'mean_rating']], how='left', left_on='id', right_on='movieId')
+peliculas = peliculas.merge(df_mean[['movieId', 'mean_rating']], how='left', left_on='id', right_on='movieId', suffixes=('', '_mean'))
+peliculas = peliculas.loc[:, ~peliculas.columns.str.endswith(('_x', '_y'))]
+
+##hago un drop
+peliculas.drop(['show_id', 'movieId'], axis=1, inplace=True)
+
 # Guardamos el archivo final
-merged_df.to_csv("streamingfinal.csv", index=False)
+peliculas.to_csv("streamingfinal.csv", index=False)
