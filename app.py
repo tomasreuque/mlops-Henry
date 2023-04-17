@@ -2,7 +2,7 @@ import pandas as pd
 from fastapi import FastAPI
 
 # importar la base de datos
-peliculas = pd.read_csv(r"C:/Users/tomas/Desktop/mlops-Henry/streamingfinal.csv")
+peliculas = pd.read_csv(r"streamingfinal.csv")
 
 # inicializar FastAPI
 app = FastAPI()
