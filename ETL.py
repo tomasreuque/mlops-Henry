@@ -17,7 +17,7 @@ for filename in os.listdir(directory):
 # Concatenación de dataframes
 peliculas = pd.concat(raw)
 ##hago un drop
-peliculas.drop(['id', 'duration_int', 'duration_type'], axis=1, inplace=True)
+#peliculas.drop(['id', 'duration_int', 'duration_type'], axis=1, inplace=True)
 #creo variable id en base a la columna plataforma
 peliculas["id"] = peliculas["plataforma"].apply(lambda x: x.split("_")[0][0]) + peliculas["show_id"]
 # Extraigo los valores duration en columna rating
@@ -59,12 +59,12 @@ for file in csv_files:
 # Computo el promedio de movieIds
 df_mean = df_concat.groupby('movieId', as_index=False).mean().rename(columns={'rating': 'mean_rating'})
 
-# Hago un merge de a columna
-peliculas = peliculas.merge(df_mean[['movieId', 'mean_rating']], how='left', left_on='id', right_on='movieId', suffixes=('', '_mean'))
-peliculas = peliculas.loc[:, ~peliculas.columns.str.endswith(('_x', '_y'))]
+# Hago un merge de la columna
+peliculas = peliculas.merge(df_mean[['movieId', 'mean_rating']], how='left', left_on='id', right_on='movieId', suffixes=('', '_peliculas'))
+peliculas = peliculas.loc[:, ~peliculas.columns.str.endswith('_peliculas')]
 
 ##hago un drop
-peliculas.drop(['show_id', 'movieId'], axis=1, inplace=True)
+#peliculas.drop(['show_id', 'movieId'], axis=1, inplace=True)
 
 # Guardamos el archivo final
 peliculas.to_csv("streamingfinal.csv", index=False)
