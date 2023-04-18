@@ -1,12 +1,28 @@
-# Proyecto de API con FastAPI
+# Proyecto MLOps
 
-Este proyecto tiene como objetivo crear una API usando el framework FastAPI para disponibilizar datos de películas y series de una empresa. La API permite el acceso a diferentes endpoints que ofrecen diferentes funcionalidades.
+Este es un proyecto de MLOps que incluye la automatización de la obtención, limpieza y procesamiento de datos para el análisis de películas y programas de televisión en plataformas de streaming.
 
-## Endpoints disponibles
+## Herramientas utilizadas
 
-### `get_max_duration`
+- Python
+- Pandas
+- Git
+- Spark
+## Objetivos
 
-Este endpoint permite obtener la película (sólo película, no serie, etc) con mayor duración según año, plataforma y tipo de duración.
+Los objetivos de este proyecto son:
 
-Ejemplo de uso:
+- Crear una arquitectura de microservicios escalable para la obtención, limpieza y procesamiento de datos.
+- Realizar análisis exploratorios de datos y visualizaciones para comprender mejor las tendencias en la industria del streaming.
+- Automatizar la obtención y el procesamiento de datos a través de programación y herramientas de integración continua.
+- Implementar modelos de aprendizaje automático para predecir la popularidad y la demanda de películas y programas de televisión.
 
+## Instrucciones de uso
+
+1. Clonar este repositorio en tu computadora.
+2. Instalar los requisitos mediante `pip install -r requirements.txt`.
+3. Ejecutar la aplicación mediante `python app.py`.
+4. Acceder a la API mediante la dirección `http://localhost:5000`.
+
+## Link al  video 
+https://clipchamp.com/watch/CZe2rBdCwuh
