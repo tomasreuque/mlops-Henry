@@ -8,7 +8,7 @@ raw = []
 # Bucle a través del directorio para leer los archivos csv
 for filename in os.listdir(directory):
     if filename.endswith(".csv"): # Lee solo los csv
-        # Agrego la columna plataforma aprovechando el loop
+        # Agrego la columna plataforma aprovechando el loop klk
         df = pd.read_csv(os.path.join(directory, filename))
         df["plataforma"] = filename.split("_")[0]  # Extraigo el nombre de la plataforma
         # Append the dataframe to the list
@@ -16,8 +16,6 @@ for filename in os.listdir(directory):
 
 # Concatenación de dataframes
 peliculas = pd.concat(raw)
-##hago un drop
-#peliculas.drop(['id', 'duration_int', 'duration_type'], axis=1, inplace=True)
 #creo variable id en base a la columna plataforma
 peliculas["id"] = peliculas["plataforma"].apply(lambda x: x.split("_")[0][0]) + peliculas["show_id"]
 # Extraigo los valores duration en columna rating
@@ -56,15 +54,18 @@ for file in csv_files:
     df = pd.read_csv(file)
     df_concat = pd.concat([df_concat, df], ignore_index=True)
 
+
+# Guardar nuevo DataFrame en un nuevo archivo CSV
+df_concat.to_csv("ratings.csv", index=False)
+
+
+
 # Computo el promedio de movieIds
 df_mean = df_concat.groupby('movieId', as_index=False).mean().rename(columns={'rating': 'mean_rating'})
 
-# Hago un merge de la columna
+# Hago un merge de la columna sin columnas __peliculas o de ese tipo
 peliculas = peliculas.merge(df_mean[['movieId', 'mean_rating']], how='left', left_on='id', right_on='movieId', suffixes=('', '_peliculas'))
 peliculas = peliculas.loc[:, ~peliculas.columns.str.endswith('_peliculas')]
-
-##hago un drop
-#peliculas.drop(['show_id', 'movieId'], axis=1, inplace=True)
 
 # Guardamos el archivo final
 peliculas.to_csv("streamingfinal.csv", index=False)
