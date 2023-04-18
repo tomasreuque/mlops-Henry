@@ -50,28 +50,42 @@ def get_count_platform(platform: str):
     return count
 
 # Endpoint para obtener el actor que más se repite según plataforma y año
-@app.get("/get_actor")
-def get_actor(platform: str, year: int):
+@app.get("/get_actor/{platform}/{year}")
+async def get_actor(platform: str, year: int):
     # Filtrar los datos según los criterios especificados
     filtered_df = peliculas[(peliculas['plataforma'] == platform) & 
-                     (peliculas['release_year'] == year)]
-    actor_counts = filtered_df['cast'].str.split(', ', expand=True).stack().value_counts()
-    max_actor_count = actor_counts.max()
-    max_actor = actor_counts[actor_counts == max_actor_count].index[0]
-    return max_actor
+                     (peliculas['release_year'] == year) & 
+                     (peliculas['type'] == 'movie')]
+    # Crear un diccionario con los actores y su cantidad de apariciones
+    actors_dict = {}
+    for index, row in filtered_df.iterrows():
+        actors_list = row['cast'].split(', ')
+        for actor in actors_list:
+            if actor in actors_dict:
+                actors_dict[actor] += 1
+            else:
+                actors_dict[actor] = 1
+    # Devolver el actor que más se repite
+    max_actor = max(actors_dict, key=actors_dict.get)
+    return {"actor": max_actor}
 
 # Endpoint para obtener la cantidad de contenidos/productos por país y año
-@app.get("/prod_per_county")
-def prod_per_county(tipo: str, pais: str, anio: int):
+@app.get("/prod_per_county/{tipo}/{pais}/{year}")
+def prod_per_county(tipo: str, pais: str, year: int):
     # Filtrar los datos según los criterios especificados
     filtered_df = peliculas[(peliculas['country'] == pais) & 
-                     (peliculas['release_year'] == anio) & 
+                     (peliculas['release_year'] == year) & 
                      (peliculas['type'] == tipo)]
     count = len(filtered_df)
 
-# Endpoint 
+# Endpoint para obtener el recuento de los contenidos dado un rating
 @app.get("/get_contents/{rating}")
 async def get_contents(rating: str):
     filtered_df = peliculas[peliculas['rating'] == rating]
     count = len(filtered_df)
     return {"count": count}
+
+#script para correr localmente las consultas
+#import uvicorn
+#if __name__ == "__main__":
+#    uvicorn.run("app:app", port=5000, log_level="info")
